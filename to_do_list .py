@@ -24,7 +24,19 @@ class To_Do_List:
             line_to_print = "%i: '%s' Priority: %s" % (num,self.to_do[num][0],priority)
             print(line_to_print)
         print(" ")
+    
+    def add_item(self,item):
+    
+    def remove_item(self,item):
+    
+    def display_priority(self,item):
+    
+    def show_HI_priority(self):
+    
+    def show_MED_priority(self):
 
+    def show_LOW_priority(self):
+    
 
 #test_code
 my_list = ["milk","pick up 4 kids", "call bobby"]
