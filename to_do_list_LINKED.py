@@ -1,3 +1,6 @@
+import tkinter as tk
+from tkinter.font import Font
+from enum import Enum
 LOW = 0
 MED = 1
 HI = 2
@@ -9,6 +12,10 @@ class Node:
         self.next = nextz
 
 class To_Do_List:
+    """This is the controller"""
+    pass # replace with code
+
+class To_Do_ListModel:
     def __init__(self,item = None, priority = LOW):
         self.dict = {LOW:[],MED:[],HI:[]}
         self.front = None
@@ -22,7 +29,7 @@ class To_Do_List:
         curr = self.front 
         while curr.next != None:
             priority_str = None
-             if curr..priority == 0:
+            if curr.priority == 0:
                 priority_str = "low"
             elif curr.prioirty == 1:
                 priority_str = "Medium"
@@ -65,7 +72,7 @@ class To_Do_List:
         found = False
         curr = self.front
 
-        while found not True:
+        while found != True:
             if curr.item == item:
                 found = True
             else:
