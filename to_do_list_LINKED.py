@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter.font import Font
+from tkinter import ttk
 from enum import Enum
 LOW = 0
 MED = 1
@@ -13,8 +14,73 @@ class Node:
 
 class To_Do_List:
     """This is the controller"""
-    pass # replace with code
+    def __init__(self):
+        """Initilizes the app"""
+    
+        # create model
+        self.model = To_Do_ListModel()
 
+        # create view
+        self.view = To_Do_ListView()
+
+        # start app
+        self.view.window.mainloop() 
+
+
+class To_Do_ListView:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("To Do List") # Replace with actual name
+
+        self.add_frame = ttk.LabelFrame(self.window,text="Add Task",width = 300,height=50)
+        self.add_frame.grid(row = 1,column = 1,sticky = tk.W+tk.E+tk.N+tk.S)
+        task_label = ttk.Label(self.add_frame,text = "New Task")
+        task_label.grid(row=1,column=1)
+        
+        new_entry_task = ttk.Entry(self.add_frame,width = 40)
+        new_entry_task.grid(row = 1,column=2,pady=3)
+
+        priority_label = ttk.Label(self.add_frame,text = " Priority of New Task")
+        priority_label.grid(row=2,column=1,pady=3)
+
+        self.combobox_val = tk.StringVar()
+        priority_combobox = ttk.Combobox(self.add_frame,height=4,textvariable=self.combobox_val)
+        priority_combobox.grid(row = 2,column=2,pady=3)
+        priority_combobox['values'] = ("Low","Medium","High")
+
+        add_task_button = ttk.Button(self.add_frame,text="Add Task")
+        add_task_button.grid(row = 2,column=3)
+
+        self.viewing_options = ttk.LabelFrame(self.window,text = "Viewing Options", width = 300, height = 50)
+        self.viewing_options.grid(row=2,column=1,sticky= tk.W+tk.E+tk.N+tk.S)
+
+        HI_button = ttk.Button(self.viewing_options,text="Show Only High Priority")
+        HI_button.grid(row = 1,column=1,pady = 4)
+        MED_button = ttk.Button(self.viewing_options,text="Show Only Medium Priority")
+        MED_button.grid(row = 2,column=1, pady = 4)
+        LO_button = ttk.Button(self.viewing_options,text="Show Only Low Priority")
+        LO_button.grid(row = 3,column=1, pady = 4)
+        Clear_button = ttk.Button(self.viewing_options,text="Clear All")
+        Clear_button.grid(row = 1,column=2, pady = 4)
+
+        self.List = ttk.LabelFrame(self.window,text="List",width=300,height=400)
+        self.List.grid(row=1,column=2,sticky = tk.W+tk.E+tk.N+tk.S)
+        to_do_listbox_label = tk.Label(self.List,text = "To Do")
+        to_do_listbox_label.grid(row = 1,column = 1,sticky = tk.N + tk.W)
+        to_do_listbox = tk.Listbox(self.List,)
+        to_do_listbox.grid(row = 2,column = 1)
+
+        completed_listbox_label = tk.Label(self.List,text = "Completed Tasks")
+        completed_listbox_label.grid(row = 3,column = 1,sticky = tk.N + tk.W)
+        completed_listbox = tk.Listbox(self.List)
+        completed_listbox.grid(row = 4,column = 1)
+
+        self.exit = ttk.Frame(self.window,width = 300,height = 100)
+        self.exit.grid(row = 1,column = 3, sticky = tk.W+tk.E+tk.N+tk.S)
+        exit_button = ttk.Button(self.exit,text="Exit")
+        exit_button.grid(row = 1,column=1, pady = 10, padx = 5)
+
+        
 class To_Do_ListModel:
     def __init__(self,item = None, priority = LOW):
         self.dict = {LOW:[],MED:[],HI:[]}
@@ -90,3 +156,7 @@ class To_Do_ListModel:
     def show_LOW_priority(self):
         return self.dict[LOW]
 
+
+
+if __name__ == "__main__":
+    app = To_Do_List()
