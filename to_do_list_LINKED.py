@@ -23,8 +23,20 @@ class To_Do_List:
         # create view
         self.view = To_Do_ListView()
 
+        # create controls
+        self.view.set_new_entry_task_handler(self.new_entry_task_handler)
+        self.view.priority_combobox
+        self.view.set_add_task_button_handler(self.add_task_button_handler)
+
         # start app
         self.view.window.mainloop() 
+    
+    # control definitions
+
+    def add_task_button_handler(self):
+            print("add task")
+
+    
 
 
 class To_Do_ListView:
@@ -48,8 +60,8 @@ class To_Do_ListView:
         priority_combobox.grid(row = 2,column=2,pady=3)
         priority_combobox['values'] = ("Low","Medium","High")
 
-        add_task_button = ttk.Button(self.add_frame,text="Add Task")
-        add_task_button.grid(row = 2,column=3)
+        self.add_task_button = ttk.Button(self.add_frame,text="Add Task")
+        self.add_task_button.grid(row = 2,column=3)
 
         self.viewing_options = ttk.LabelFrame(self.window,text = "Viewing Options", width = 300, height = 50)
         self.viewing_options.grid(row=2,column=1,sticky= tk.W+tk.E+tk.N+tk.S)
@@ -77,8 +89,16 @@ class To_Do_ListView:
 
         self.exit = ttk.Frame(self.window,width = 300,height = 100)
         self.exit.grid(row = 1,column = 3, sticky = tk.W+tk.E+tk.N+tk.S)
-        exit_button = ttk.Button(self.exit,text="Exit")
+        exit_button = ttk.Button(self.exit,text="Exit", command=self.window.quit)
         exit_button.grid(row = 1,column=1, pady = 10, padx = 5)
+
+    # assign commands from the Controller
+        
+    def set_add_task_button_handler(self,handler):
+        self.add_task_button.configure(command=handler)
+    
+    def 
+
 
         
 class To_Do_ListModel:
