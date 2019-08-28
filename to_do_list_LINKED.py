@@ -6,6 +6,16 @@ LOW = 0
 MED = 1
 HI = 2
 
+def Convert_Str_to_Int(string_to_convert):
+    if string_to_convert == "Low":
+        string_as_num = LOW
+    elif string_to_convert == "Medium":
+        string_as_num = MED
+    else:
+        string_as_num = HI
+    
+    return string_as_num
+    
 class Node:
     def __init__(self,item, priority = LOW, nextz = None):
         self.item = item
@@ -24,17 +34,47 @@ class To_Do_List:
         self.view = To_Do_ListView()
 
         # create controls
-        self.view.set_new_entry_task_handler(self.new_entry_task_handler)
-        self.view.priority_combobox
+        
         self.view.set_add_task_button_handler(self.add_task_button_handler)
-
+        self.view.set_HI_button_handler(self.HI_button_handler)
+        self.view.set_MED_button_handler(self.MED_button_handler)
+        self.view.set_LO_button_handler(self.LO_button_handler)
+        self.view.set_Clear_button_handler(self.Clear_button_handler)
         # start app
         self.view.window.mainloop() 
     
     # control definitions
-
+    
     def add_task_button_handler(self):
-            print("add task")
+            #print("add task selected")
+            #print("adding task...")
+            item = self.view.new_entry_task.get()
+            priority = Convert_Str_to_Int(self.view.combobox_val.get())
+            task_added = self.model.add_task(item,priority)
+            if task_added == True:
+                self.view.update_to_do_listbox([item])
+    
+    def HI_button_handler(self):
+        print("Show High Prioirty")
+        self.view.to_do_listbox.delete(0, tk.END)
+        self.view.update_to_do_listbox(self.model.show_HI_priority())
+
+    
+    def MED_button_handler(self):
+        print("Show Medium Prioirty")
+        self.view.to_do_listbox.delete(0, tk.END)
+        self.view.update_to_do_listbox(self.model.show_MED_priority())
+    
+    def LO_button_handler(self):
+        print("Show Low Prioirty")
+        self.view.to_do_listbox.delete(0, tk.END)
+        self.view.update_to_do_listbox(self.model.show_LO_priority())
+    
+    def Clear_button_handler(self):
+        print("Clear All")
+        self.model.dict = {LOW:[],MED:[],HI:[]}
+        self.view.to_do_listbox.delete(0, tk.END)
+            
 
     
 
@@ -49,38 +89,26 @@ class To_Do_ListView:
         task_label = ttk.Label(self.add_frame,text = "New Task")
         task_label.grid(row=1,column=1)
         
-        new_entry_task = ttk.Entry(self.add_frame,width = 40)
-        new_entry_task.grid(row = 1,column=2,pady=3)
+        self.new_entry_task = ttk.Entry(self.add_frame,width = 40)
+        self.new_entry_task.grid(row = 1,column=2,pady=3)
 
         priority_label = ttk.Label(self.add_frame,text = " Priority of New Task")
         priority_label.grid(row=2,column=1,pady=3)
 
         self.combobox_val = tk.StringVar()
-        priority_combobox = ttk.Combobox(self.add_frame,height=4,textvariable=self.combobox_val)
-        priority_combobox.grid(row = 2,column=2,pady=3)
-        priority_combobox['values'] = ("Low","Medium","High")
+        self.priority_combobox = ttk.Combobox(self.add_frame,height=4,textvariable=self.combobox_val)
+        self.priority_combobox.grid(row = 2,column=2,pady=3)
+        self.priority_combobox['values'] = ("Low","Medium","High")
 
         self.add_task_button = ttk.Button(self.add_frame,text="Add Task")
         self.add_task_button.grid(row = 2,column=3)
-
-        self.viewing_options = ttk.LabelFrame(self.window,text = "Viewing Options", width = 300, height = 50)
-        self.viewing_options.grid(row=2,column=1,sticky= tk.W+tk.E+tk.N+tk.S)
-
-        HI_button = ttk.Button(self.viewing_options,text="Show Only High Priority")
-        HI_button.grid(row = 1,column=1,pady = 4)
-        MED_button = ttk.Button(self.viewing_options,text="Show Only Medium Priority")
-        MED_button.grid(row = 2,column=1, pady = 4)
-        LO_button = ttk.Button(self.viewing_options,text="Show Only Low Priority")
-        LO_button.grid(row = 3,column=1, pady = 4)
-        Clear_button = ttk.Button(self.viewing_options,text="Clear All")
-        Clear_button.grid(row = 1,column=2, pady = 4)
 
         self.List = ttk.LabelFrame(self.window,text="List",width=300,height=400)
         self.List.grid(row=1,column=2,sticky = tk.W+tk.E+tk.N+tk.S)
         to_do_listbox_label = tk.Label(self.List,text = "To Do")
         to_do_listbox_label.grid(row = 1,column = 1,sticky = tk.N + tk.W)
-        to_do_listbox = tk.Listbox(self.List,)
-        to_do_listbox.grid(row = 2,column = 1)
+        self.to_do_listbox = tk.Listbox(self.List,)
+        self.to_do_listbox.grid(row = 2,column = 1)
 
         completed_listbox_label = tk.Label(self.List,text = "Completed Tasks")
         completed_listbox_label.grid(row = 3,column = 1,sticky = tk.N + tk.W)
@@ -92,12 +120,45 @@ class To_Do_ListView:
         exit_button = ttk.Button(self.exit,text="Exit", command=self.window.quit)
         exit_button.grid(row = 1,column=1, pady = 10, padx = 5)
 
-    # assign commands from the Controller
+        self.viewing_options = ttk.LabelFrame(self.window,text = "Viewing Options", width = 300, height = 50)
+        self.viewing_options.grid(row=2,column=1,sticky= tk.W+tk.E+tk.N+tk.S)
+
+        self.HI_button = ttk.Button(self.viewing_options,text="Show Only High Priority")
+        self.HI_button.grid(row = 1,column=1,pady = 4)
+        self.MED_button = ttk.Button(self.viewing_options,text="Show Only Medium Priority")
+        self.MED_button.grid(row = 2,column=1, pady = 4)
+        self.LO_button = ttk.Button(self.viewing_options,text="Show Only Low Priority")
+        self.LO_button.grid(row = 3,column=1, pady = 4)
+        self.show_all_button = ttk.Button(self.viewing_options,text="Show All Tasks")
+        self.show_all_button.grid(row = 1,column=2, pady = 4)
+        self.Clear_button = ttk.Button(self.viewing_options,text="Clear All")
+        self.Clear_button.grid(row = 2,column=2, pady = 4)
+
         
+
+
+    # assign commands from the Controller
     def set_add_task_button_handler(self,handler):
         self.add_task_button.configure(command=handler)
     
-    def 
+    def set_HI_button_handler(self,handler):
+        self.HI_button.configure(command=handler)
+    
+    def set_MED_button_handler(self,handler):
+        self.MED_button.configure(command=handler)
+    
+    def set_LO_button_handler(self,handler):
+        self.LO_button.configure(command=handler)
+    
+    def set_Clear_button_handler(self,handler):
+        self.Clear_button.configure(command=handler)
+    
+    # updates listboxes
+    def update_to_do_listbox(self,my_list):
+        for item in my_list:
+            self.to_do_listbox.insert(tk.END,item)
+    
+    
 
 
         
@@ -117,7 +178,7 @@ class To_Do_ListModel:
             priority_str = None
             if curr.priority == 0:
                 priority_str = "low"
-            elif curr.prioirty == 1:
+            elif curr.priority == 1:
                 priority_str = "Medium"
             else:
                 priority_str = "High"
@@ -125,20 +186,28 @@ class To_Do_ListModel:
             curr = curr.next
         print(curr.item)
 
-    def add_item(self,item, priority = LOW):
-        curr = self.front
-        if self.front == None:
-            self.front = Node(item,priority)
-            self.dict[priority].append(item)
-            self.count += 1
-        else:
+    def add_task(self,item, priority = LOW):
+        #print("New Task entry: %s" % (item))
+        #print("Add Task Successful")
+        if item != "":
             curr = self.front
-            while curr.next != None:
-                curr = curr.next
-            curr.next = Node(item,priority)
-            self.dict[priority].append(item)
-            self.count += 1
+            if self.front == None:
+                self.front = Node(item,priority)
+                self.dict[priority].append(item)
+                self.count += 1
+            else:
+                curr = self.front
+                while curr.next != None:
+                    curr = curr.next
+                curr.next = Node(item,priority)
+                self.dict[priority].append(item)
+                self.count += 1
+            self.print_list()
 
+            return True
+        else:
+            return False
+        
 
         
     
@@ -173,7 +242,7 @@ class To_Do_ListModel:
     def show_MED_priority(self):
         return self.dict[MED]
 
-    def show_LOW_priority(self):
+    def show_LO_priority(self):
         return self.dict[LOW]
 
 
