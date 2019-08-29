@@ -40,6 +40,7 @@ class To_Do_List:
         self.view.set_MED_button_handler(self.MED_button_handler)
         self.view.set_LO_button_handler(self.LO_button_handler)
         self.view.set_Clear_button_handler(self.Clear_button_handler)
+        self.view.set_show_all_button_handler(self.show_all_button_handler)
         # start app
         self.view.window.mainloop() 
     
@@ -70,10 +71,20 @@ class To_Do_List:
         self.view.to_do_listbox.delete(0, tk.END)
         self.view.update_to_do_listbox(self.model.show_LO_priority())
     
+    def show_all_button_handler(self):
+        print("show all")
+        self.view.to_do_listbox.delete(0, tk.END)
+        print("empty list")
+        full_list = self.model.show_all()
+        print("full list acquired")
+        self.view.update_to_do_listbox(full_list)
+
     def Clear_button_handler(self):
         print("Clear All")
         self.model.dict = {LOW:[],MED:[],HI:[]}
+        self.model.front = None
         self.view.to_do_listbox.delete(0, tk.END)
+
             
 
     
@@ -153,6 +164,9 @@ class To_Do_ListView:
     def set_Clear_button_handler(self,handler):
         self.Clear_button.configure(command=handler)
     
+    def set_show_all_button_handler(self,handler):
+        self.show_all_button.configure(command=handler)
+    
     # updates listboxes
     def update_to_do_listbox(self,my_list):
         for item in my_list:
@@ -172,7 +186,8 @@ class To_Do_ListModel:
             self.dict[priority].append(item)
             self.count = 1
     
-    def print_list(self):
+    def show_all(self):
+        item_list = []
         curr = self.front 
         while curr.next != None:
             priority_str = None
@@ -182,9 +197,10 @@ class To_Do_ListModel:
                 priority_str = "Medium"
             else:
                 priority_str = "High"
+            item_list.append(curr.item)
             print("%s , Priority: %s" % (curr.item,priority_str))
             curr = curr.next
-        print(curr.item)
+        return item_list
 
     def add_task(self,item, priority = LOW):
         #print("New Task entry: %s" % (item))
@@ -202,7 +218,6 @@ class To_Do_ListModel:
                 curr.next = Node(item,priority)
                 self.dict[priority].append(item)
                 self.count += 1
-            self.print_list()
 
             return True
         else:
